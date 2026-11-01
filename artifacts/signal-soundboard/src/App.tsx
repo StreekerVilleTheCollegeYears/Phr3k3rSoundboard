@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   AudioLines,
   Cable,
   Delete,
+  Download,
   Headphones,
   Phone,
   Play,
@@ -28,6 +29,10 @@ type Sound = {
   category: Category;
   note: string;
   events: ToneEvent[];
+};
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 };
 
 const dtmfFrequencies: Record<string, [number, number]> = {
@@ -104,10 +109,40 @@ function App() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeLabel, setActiveLabel] = useState('No signal selected');
   const [audioError, setAudioError] = useState('');
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installMessage, setInstallMessage] = useState('');
   const audioContext = useRef<AudioContext | null>(null);
   const oscillators = useRef<OscillatorNode[]>([]);
   const finishTimer = useRef<number | null>(null);
   const playbackGeneration = useRef(0);
+
+  useEffect(() => {
+    const handleInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    const handleInstalled = () => {
+      setInstallPrompt(null);
+      setInstallMessage('Signal Soundboard is installed on this device.');
+    };
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    window.addEventListener('appinstalled', handleInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      window.removeEventListener('appinstalled', handleInstalled);
+    };
+  }, []);
+
+  const installApp = async () => {
+    if (!installPrompt) {
+      setInstallMessage('After publishing, open in Android Chrome and choose Install app from the browser menu.');
+      return;
+    }
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    setInstallPrompt(null);
+    setInstallMessage(outcome === 'accepted' ? 'Signal Soundboard is installing.' : 'Installation was dismissed.');
+  };
 
   const filteredSounds = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -204,7 +239,13 @@ function App() {
             <div className="brand-sub">An archive of the audible line</div>
           </div>
         </div>
-        <div className="archive-status"><span className="status-lamp" /> <span>Local synthesis</span><span>·</span><span>Offline by design</span></div>
+        <div className="header-actions">
+          <div className="archive-status"><span className="status-lamp" /> <span>Local synthesis</span><span>·</span><span>Offline by design</span></div>
+          <button className="install-button" type="button" onClick={installApp} data-testid="button-install-app">
+            <Download size={13} aria-hidden="true" /> Install app
+          </button>
+          {installMessage && <span className="install-message" role="status">{installMessage}</span>}
+        </div>
       </header>
 
       <section className="hero" aria-labelledby="page-title">

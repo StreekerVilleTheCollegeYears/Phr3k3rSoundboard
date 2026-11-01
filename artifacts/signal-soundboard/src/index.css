@@ -74,13 +74,17 @@ button:focus-visible, input:focus-visible { outline: 2px solid #d8a64f; outline-
 ::selection { background: rgba(214, 157, 62, .35); }
 
 .shell { width: min(1440px, 100%); margin: 0 auto; padding: 29px 42px 22px; position: relative; }
-.masthead { display: flex; align-items: center; justify-content: space-between; padding-bottom: 22px; border-bottom: 1px solid rgba(177, 157, 121, .18); }
+.masthead { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid rgba(177, 157, 121, .18); }
 .brand { display: flex; align-items: center; gap: 13px; }
 .brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #987638; color: #d6a74e; transform: rotate(45deg); }
 .brand-mark svg { transform: rotate(-45deg); }
 .brand-name { font: 600 14px var(--app-font-mono); letter-spacing: .15em; text-transform: uppercase; }
 .brand-sub { margin-top: 4px; color: #747b7e; font: 10px var(--app-font-mono); letter-spacing: .11em; text-transform: uppercase; }
 .archive-status { display: flex; align-items: center; gap: 10px; color: #8b9492; font: 10px var(--app-font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 13px; flex-wrap: wrap; }
+.install-button { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; gap: 7px; padding: 0 11px; border: 1px solid rgba(197, 154, 75, .48); background: rgba(171, 128, 54, .12); color: #dfbd73; cursor: pointer; font: 9px var(--app-font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.install-button:hover { border-color: #d8a64f; background: rgba(171, 128, 54, .22); }
+.install-message { flex-basis: 100%; color: #b8a272; text-align: right; font: 9px/1.4 var(--app-font-mono); }
 .status-lamp { width: 7px; height: 7px; border-radius: 50%; background: #98ad72; box-shadow: 0 0 10px rgba(152,173,114,.45); }
 .hero { padding: 42px 0 30px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 24px; }
 .eyebrow { color: #c79b4e; font: 10px var(--app-font-mono); letter-spacing: .2em; text-transform: uppercase; }
@@ -89,8 +93,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid #d8a64f; outline-
 .hero-copy { margin: 0; color: #929695; font-size: 13px; line-height: 1.65; max-width: 580px; }
 .hero-stamp { border: 1px solid rgba(197, 154, 75, .35); color: #b28d4d; padding: 10px 13px; font: 10px/1.6 var(--app-font-mono); letter-spacing: .08em; text-transform: uppercase; transform: rotate(-2deg); white-space: nowrap; }
 .hero-stamp strong { display: block; font-size: 12px; color: #d8b76e; }
-.workbench { display: grid; grid-template-columns: minmax(0,1fr) 294px; gap: 20px; align-items: start; }
-.library, .keypad-panel { border: 1px solid rgba(168, 158, 135, .19); background: linear-gradient(145deg, rgba(28,33,37,.94), rgba(19,22,26,.97)); box-shadow: 0 15px 45px rgba(0,0,0,.22); }
+.workbench { display: grid; grid-template-columns: minmax(0,1fr) 294px; gap: 20px; align-items: start; min-width: 0; }
+.library, .keypad-panel { min-width: 0; border: 1px solid rgba(168, 158, 135, .19); background: linear-gradient(145deg, rgba(28,33,37,.94), rgba(19,22,26,.97)); box-shadow: 0 15px 45px rgba(0,0,0,.22); }
 .section-head { display: flex; align-items: center; justify-content: space-between; padding: 17px 19px; border-bottom: 1px solid rgba(168, 158, 135, .15); }
 .section-title { display: flex; align-items: center; gap: 10px; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; }
 .section-title svg { color: #c69a4d; }
@@ -133,8 +137,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid #d8a64f; outline-
 .key-button small { display: block; font-size: 7px; color: #7d817a; letter-spacing: .08em; margin-top: 2px; }
 .key-button:hover { border-color: #b18949; color: #e6c16f; background: #2d302d; }
 .key-button:active { transform: translateY(1px); }
-.keypad-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 17px 18px; }
-.keypad-actions button { height: 34px; border: 1px solid #78613b; background: rgba(180,134,56,.14); color: #e1bd70; cursor: pointer; font: 9px var(--app-font-mono); letter-spacing: .06em; text-transform: uppercase; }
+.keypad-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 17px 18px; min-width: 0; }
+.keypad-actions button { min-width: 0; height: 34px; padding: 0 5px; border: 1px solid #78613b; background: rgba(180,134,56,.14); color: #e1bd70; cursor: pointer; font: 9px var(--app-font-mono); letter-spacing: .06em; text-transform: uppercase; }
 .keypad-actions button:hover { background: rgba(180,134,56,.24); }
 .keypad-actions button:disabled { opacity: .38; cursor: not-allowed; }
 .transport { margin-top: 12px; padding: 13px 15px; border-top: 1px solid rgba(168,158,135,.15); display: flex; align-items: center; gap: 11px; }
@@ -149,7 +153,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid #d8a64f; outline-
 .transport-copy span { color: #727b79; font: 8px var(--app-font-mono); display: block; margin-top: 4px; }
 .volume-row { display: flex; align-items: center; gap: 8px; padding: 0 17px 16px; color: #92978e; }
 .volume-row label { font: 8px var(--app-font-mono); text-transform: uppercase; letter-spacing: .08em; }
-.volume-row input { width: 100%; accent-color: #c99a4b; }
+.volume-row input { flex: 1 1 0; width: 0; min-width: 0; accent-color: #c99a4b; }
 .volume-value { font: 8px var(--app-font-mono); color: #b8a272; width: 26px; text-align: right; }
 .notice { margin: 0 17px 16px; border-left: 2px solid #9a7042; background: rgba(153,112,53,.08); color: #92938b; padding: 9px 10px; font-size: 9px; line-height: 1.5; }
 .notice strong { color: #c2a46a; font-weight: 500; }
@@ -162,9 +166,11 @@ button:focus-visible, input:focus-visible { outline: 2px solid #d8a64f; outline-
 }
 @media (max-width: 720px) {
   .shell { padding: 18px 15px 22px; }
-  .masthead { padding-bottom: 16px; }
+  .masthead { align-items: flex-start; flex-direction: column; padding-bottom: 16px; }
   .brand-sub { font-size: 8px; }
   .archive-status { font-size: 8px; }
+  .header-actions { width: 100%; justify-content: space-between; gap: 8px; }
+  .install-message { text-align: left; }
   .hero { grid-template-columns: 1fr; padding: 31px 0 22px; gap: 16px; }
   .hero-stamp { justify-self: start; }
   .workbench { grid-template-columns: 1fr; }
