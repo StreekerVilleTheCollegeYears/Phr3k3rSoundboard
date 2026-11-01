@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Signal Soundboard"
+description = "A browser-based soundboard for classic telephone and phreaking-era tones, with labeled sounds and playback controls in a dark cyberpunk deco interface."
+version = "1.0.0"
+id = "artifacts/signal-soundboard"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18288
+
+[services.development]
+run = "pnpm --filter @workspace/signal-soundboard run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/signal-soundboard", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/signal-soundboard/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18288"
+BASE_PATH = "/"
