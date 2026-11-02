@@ -1,0 +1,1 @@
+- [Signal archive scope](signal-archive-scope.md) — keep telephony signaling examples locally synthesized and clearly non-operational.

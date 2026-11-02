@@ -43,6 +43,31 @@ const dtmfFrequencies: Record<string, [number, number]> = {
   A: [697, 1633], B: [770, 1633], C: [852, 1633], D: [941, 1633],
 };
 
+// North American R1 MF uses six frequencies in two-of-six combinations.
+const mfDigitFrequencies: Record<string, [number, number]> = {
+  '0': [1300, 1500],
+  '1': [700, 900],
+  '2': [700, 1100],
+  '3': [900, 1100],
+  '4': [700, 1300],
+  '5': [900, 1300],
+  '6': [1100, 1300],
+  '7': [700, 1500],
+  '8': [900, 1500],
+  '9': [1100, 1500],
+};
+const mfDigitOrder = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] as const;
+
+const mfMarkers = [
+  { id: 'kp', label: 'KP', role: 'Start marker', frequencies: [1100, 1700] },
+  { id: 'kp2', label: 'KP2', role: 'Alternate start marker', frequencies: [1300, 1700] },
+  { id: 'st', label: 'ST', role: 'End marker', frequencies: [1500, 1700] },
+  { id: 'st-prime', label: "ST′", role: 'Alternate end marker', frequencies: [900, 1700] },
+  { id: 'st-double-prime', label: 'ST″', role: 'Alternate end marker', frequencies: [700, 1700] },
+] as const;
+
+const frequencyLabel = (frequencies: readonly number[]) => `${frequencies.join(' + ')} Hz`;
+
 const dtmfEvent = (digit: string, duration = 360): ToneEvent => ({
   frequencies: dtmfFrequencies[digit] ?? dtmfFrequencies['5'],
   duration,
@@ -54,6 +79,29 @@ const tone = (frequencies: number[], duration = 650, wave: OscillatorType = 'sin
 const pulse = (frequencies: number[], duration: number, gap: number, wave: OscillatorType = 'sine'): ToneEvent => ({
   frequencies, duration, gap, wave,
 });
+
+const mfDigitSounds: Sound[] = Object.entries(mfDigitFrequencies).map(([digit, frequencies]) => ({
+  id: `mf-${digit}`,
+  name: `MF digit · ${digit}`,
+  category: 'Signaling',
+  note: `R1 MF digit pair · ${frequencyLabel(frequencies)}`,
+  events: [tone(frequencies, 330)],
+}));
+
+const mfMarkerSounds: Sound[] = mfMarkers.map((marker) => ({
+  id: `mf-${marker.id}`,
+  name: `MF ${marker.label}`,
+  category: 'Signaling',
+  note: `${marker.role} · ${frequencyLabel(marker.frequencies)}`,
+  events: [tone([...marker.frequencies], 330)],
+}));
+
+const mfDigitSequence = mfDigitOrder.map((digit) =>
+  `${digit} (${mfDigitFrequencies[digit].join(' + ')})`,
+);
+const mfMarkerSequence = mfMarkers.map(({ label, frequencies }) =>
+  `${label} (${frequencies.join(' + ')})`,
+);
 
 const sounds: Sound[] = [
   ...['1','2','3','4','5','6','7','8','9','*','0','#','A','B','C','D'].map((digit) => ({
@@ -77,14 +125,23 @@ const sounds: Sound[] = [
   { id: 'howler', name: 'Howler · off-hook alarm', category: 'Switching', note: 'Escalating reminder tone · simulated', events: [tone([480, 620], 220), tone([480, 620], 220), tone([480, 620], 220), tone([480, 620], 220), tone([480, 620], 220)] },
   { id: 'relay', name: 'Trunk connect / relay', category: 'Switching', note: 'Switching pulses with relay-like clicks', events: [tone([1200], 55, 'square'), tone([620], 130), tone([1500], 50, 'square'), tone([880], 220)] },
   { id: 'intercept', name: 'Operator intercept', category: 'Switching', note: 'Intercept cadence simulation · no recorded speech', events: [tone([440, 620], 650), tone([350, 440], 500), tone([480, 620], 430), tone([480, 620], 430)] },
-  { id: 'mf-kp', name: 'MF signaling · KP', category: 'Signaling', note: 'Multifrequency trunk start marker', events: [tone([1100, 1700], 360, 'sine')] },
-  { id: 'mf-st', name: 'MF signaling · ST', category: 'Signaling', note: 'Multifrequency trunk end marker', events: [tone([1500, 1700], 360, 'sine')] },
   { id: 'bluebox-2600', name: '2600 Hz · trunk clear', category: 'Signaling', note: 'Single-frequency signaling tone · historical simulation', events: [tone([2600], 1050)] },
-  { id: 'mf-1', name: 'MF digit · 1', category: 'Signaling', note: 'Multifrequency signaling pair', events: [tone([700, 900], 330)] },
-  { id: 'mf-2', name: 'MF digit · 2', category: 'Signaling', note: 'Multifrequency signaling pair', events: [tone([700, 1100], 330)] },
-  { id: 'mf-5', name: 'MF digit · 5', category: 'Signaling', note: 'Multifrequency signaling pair', events: [tone([900, 1100], 330)] },
-  { id: 'mf-0', name: 'MF digit · 0', category: 'Signaling', note: 'Multifrequency signaling pair', events: [tone([1300, 1500], 330)] },
-  { id: 'mf-keypulsing', name: 'Blue-box sequence · KP 1 ST', category: 'Signaling', note: 'Historical MF sequence demonstration', events: [tone([1100, 1700], 250), tone([700, 900], 240), tone([1500, 1700], 250)] },
+  ...mfDigitSounds,
+  ...mfMarkerSounds,
+  {
+    id: 'mf-digit-study',
+    name: 'MF digit-pair study · 0–9',
+    category: 'Signaling',
+    note: `Non-protocol listening sweep · ${mfDigitSequence.join(' → ')}`,
+    events: mfDigitOrder.map((digit) => tone(mfDigitFrequencies[digit], 220)),
+  },
+  {
+    id: 'mf-marker-study',
+    name: 'MF marker-pair study',
+    category: 'Signaling',
+    note: `Non-protocol listening comparison · ${mfMarkerSequence.join(' → ')}`,
+    events: mfMarkers.map(({ frequencies }) => tone([...frequencies], 220)),
+  },
   { id: 'modem', name: 'Download / modem handshake', category: 'Line noise', note: 'Carrier sweep and data chirps · synthesized', events: [{ frequencies: [900], duration: 540, sweep: [480, 1900], wave: 'sawtooth' }, tone([2100, 2225], 270, 'square'), tone([1850, 2100], 360), { frequencies: [1200], duration: 550, sweep: [2200, 780], wave: 'sawtooth' }, pulse([2100, 2400], 105, 70, 'square'), pulse([1800, 2300], 80, 60, 'square')] },
   { id: 'fax-carrier', name: 'Fax carrier', category: 'Line noise', note: 'High carrier tone with short signal bursts', events: [tone([2100], 620), pulse([1300, 2100], 130, 100, 'square'), pulse([1300, 2100], 130, 100, 'square')] },
   { id: 'phone-ring', name: 'Telephone bell ring', category: 'Line noise', note: 'Old line bell cadence · synthesized', events: [pulse([440, 480], 520, 80, 'square'), pulse([440, 480], 520, 540, 'square'), pulse([440, 480], 520, 250, 'square')] },
