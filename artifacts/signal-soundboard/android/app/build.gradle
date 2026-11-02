@@ -1,0 +1,30 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "com.signalsoundboard.android"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.signalsoundboard.android"
+        minSdk 23
+        targetSdk 36
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+def workspaceRoot = rootProject.projectDir.toPath().resolve("../../..").normalize().toFile()
+
+tasks.register("exportDebugApk", Copy) {
+    dependsOn("assembleDebug")
+    from(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
+    into(new File(workspaceRoot, "generated-artifacts"))
+    rename { "signal-soundboard.apk" }
+}

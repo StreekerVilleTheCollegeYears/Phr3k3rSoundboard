@@ -54,3 +54,7 @@ Thumbs.db
 .cache/
 .local/
 /.android-sdk/
+/generated-artifacts/
+/artifacts/signal-soundboard/android/app/build/
+/artifacts/signal-soundboard/android/app/src/main/assets/site/
+/artifacts/signal-soundboard/dist/android-web/

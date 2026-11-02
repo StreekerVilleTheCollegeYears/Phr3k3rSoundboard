@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "yt6eoRmcG-2KabB2xgIgE"
+uri = "file://generated-artifacts/signal-soundboard.apk"
+type = "unspecified"
+title = "Signal Soundboard Android APK"
+description = "Installable debug APK for sideloading. It packages the soundboard offline and requests no Android permissions; it is not signed for Play Store release."
+logical_id = "78a71519-b31c-4aa2-87ae-fb7bb62202b3"
+content_hash = "sha256:a5252795d2a631a6880fc066713754f59aaef7e7597135dcb1623d0d9ad40774"
+size = 245427
+mtime_ms = 1793637173878
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:6efa9306-dcda-4339-a88e-16dac01d6811/78a71519-b31c-4aa2-87ae-fb7bb62202b3/6f6d9831-a9ec-49a2-91c6-38fe20cf18b9"
+storage_version_token = "1793637219839614"
+content_type = "application/octet-stream"

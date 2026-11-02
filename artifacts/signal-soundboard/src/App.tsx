@@ -159,6 +159,7 @@ const keypad = [
 ];
 
 function App() {
+  const nativeAppShell = new URLSearchParams(window.location.search).get('native') === '1';
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('All sounds');
   const [digits, setDigits] = useState('');
@@ -298,9 +299,11 @@ function App() {
         </div>
         <div className="header-actions">
           <div className="archive-status"><span className="status-lamp" /> <span>Local synthesis</span><span>·</span><span>Offline by design</span></div>
-          <button className="install-button" type="button" onClick={installApp} data-testid="button-install-app">
-            <Download size={13} aria-hidden="true" /> Install app
-          </button>
+          {!nativeAppShell && (
+            <button className="install-button" type="button" onClick={installApp} data-testid="button-install-app">
+              <Download size={13} aria-hidden="true" /> Install app
+            </button>
+          )}
           {installMessage && <span className="install-message" role="status">{installMessage}</span>}
         </div>
       </header>
